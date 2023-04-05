@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: busybox-scale-down
+spec:
+  schedule: "5,15,25,35,45,55 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: busybox-scale-down
+            image: bitnami/kubectl:latest
+            command: ["kubectl"]
+            args: ["patch", "--patch", "{\"spec\":{\"minReplicas\":1}}", "hpa", "busybox"]
+          restartPolicy: Never
+          serviceAccountName: kube-api-server-sa
